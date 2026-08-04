@@ -29,6 +29,7 @@ app.get("/health", (req, res) => {
 });
 
 // START
-app.listen(4000, "0.0.0.0", () => {
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, "0.0.0.0", () => {
   console.log("✅ User Service running");
 });
