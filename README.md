@@ -32,6 +32,7 @@
 # 📑 Table of Contents
 
 - [Overview](#overview)
+- [Project Structure](#project-structure)
 - [Service Responsibilities](#service-responsibilities)
 - [Project Repositories](#project-repositories)
 - [Architecture](#architecture)
@@ -42,7 +43,6 @@
 - [Tech Stack](#tech-stack)
 - [AWS Infrastructure](#aws-infrastructure)
 - [CI/CD Pipeline](#cicd-pipeline)
-- [Project Structure](#project-structure)
 - [Docker Configuration](#docker-configuration)
 - [Deployment Flow](#deployment-flow)
 - [Application Screenshots](#application-screenshots)
@@ -63,6 +63,35 @@ It exposes REST APIs that allow users to register, log in securely using JWT aut
 The service is containerized using Docker and deployed to Amazon ECS Fargate through a fully automated Jenkins CI/CD pipeline.
 
 ----
+<a id="project-structure"></a>
+
+# 📁 Project Structure
+```
+src/
+│
+├── controllers/
+│     ├── auth.controller.js
+│     └── addressController.js
+│
+├── middleware/
+│     └── auth.middleware.js
+│
+├── models/
+│     └── addressModel.js
+│
+├── routes/
+│     └── auth.routes.js
+│
+├── app.js
+└── db.js
+
+Dockerfile
+Jenkinsfile
+package.json
+README.md
+
+```
+---
 
 <a id="service-responsibilities"></a>
 # 🌐 Service Responsibilities
@@ -321,36 +350,6 @@ Amazon ECS Fargate
 | Deploy New Revision | Update the ECS Service with the latest task definition |
 | Cleanup | Remove unused Docker images from Jenkins |
 
----
-
-<a id="project-structure"></a>
-
-# 📁 Project Structure
-```
-src/
-│
-├── controllers/
-│     ├── auth.controller.js
-│     └── addressController.js
-│
-├── middleware/
-│     └── auth.middleware.js
-│
-├── models/
-│     └── addressModel.js
-│
-├── routes/
-│     └── auth.routes.js
-│
-├── app.js
-└── db.js
-
-Dockerfile
-Jenkinsfile
-package.json
-README.md
-
-```
 ---
 
 <a id="docker-configuration"></a>
