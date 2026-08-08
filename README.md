@@ -326,7 +326,7 @@ Amazon ECS Fargate
 <a id="project-structure"></a>
 
 # 📁 Project Structure
-
+```
 src/
 │
 ├── controllers/
@@ -350,6 +350,7 @@ Jenkinsfile
 package.json
 README.md
 
+```
 ---
 
 <a id="docker-configuration"></a>
@@ -427,19 +428,20 @@ Amazon RDS MySQL
 
 # 📸 Application Screenshots
 
-## 🔐 Login Page
-
-<p align="center">
-  <img src="./assets/LoginPage.png" width="90%">
-</p>
-
----
 
 ## 👤 User Login
 
 <p align="center">
-  <img src="./assets/Login1.png" width="90%">
+  <img src="./Assets/Login1.png" width="90%">
 </p>
+
+---
+## 🔐 Login Page
+
+<p align="center">
+  <img src="./Assets/LoginPage.png" width="90%">
+</p>
+
 
 ---
 
