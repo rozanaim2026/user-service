@@ -29,8 +29,6 @@
 
 ---
 
-<a id="table-of-contents"></a>
-
 # 📑 Table of Contents
 
 - [Overview](#overview)
@@ -39,11 +37,15 @@
 - [Architecture](#architecture)
 - [Features](#features)
 - [API Endpoints](#api-endpoints)
+- [Authentication Flow](#authentication-flow)
+- [Security Features](#security-features)
 - [Tech Stack](#tech-stack)
 - [AWS Infrastructure](#aws-infrastructure)
 - [CI/CD Pipeline](#cicd-pipeline)
-- [Repository Structure](#repository-structure)
+- [Project Structure](#project-structure)
+- [Docker Configuration](#docker-configuration)
 - [Deployment Flow](#deployment-flow)
+- [Application Screenshots](#application-screenshots)
 - [Getting Started](#getting-started)
 - [Future Improvements](#future-improvements)
 - [Author](#author)
@@ -61,22 +63,20 @@ It exposes REST APIs that allow users to register, log in securely using JWT aut
 The service is containerized using Docker and deployed to Amazon ECS Fargate through a fully automated Jenkins CI/CD pipeline.
 
 ----
-<a id="service-responsibilities"></a>
 
-# 👤 Service Responsibilities
+<a id="service-responsibilities"></a>
+# 🌐 Service Responsibilities
 
 The User Service is responsible for:
 
 - User Registration
-- User Login
-- JWT Authentication
-- Password Encryption using bcrypt
-- User Profile Management
+- User Authentication
+- JWT Token Generation
+- Refresh Token Management
+- User Authorization
 - Address Management
-- Authentication Middleware
-- REST API Endpoints
-- MySQL Database Integration
-- Secure Authentication for Other Services
+- Admin User Operations
+- Amazon RDS Database Communication
 
 ----
 
@@ -93,22 +93,19 @@ The User Service is responsible for:
 | [Payment Service](https://github.com/rozanaim2026/payment-service) | Razorpay Integration |
 
 ---
-
 <a id="architecture"></a>
 
 # 🏗️ Architecture
 
 ```text
-Frontend
-     │
-REST API Requests
-     ▼
+Client
+   │
 Application Load Balancer
-     │
-Amazon ECS Fargate
-     │
-User Service Container
-     │
+   │
+User Service (Amazon ECS)
+   │
+JWT Authentication
+   │
 Amazon RDS MySQL
 ```
 
@@ -124,109 +121,158 @@ Amazon RDS MySQL
 
 5. JSON responses are returned to the frontend through REST APIs.
 
----
 
+---
 <a id="features"></a>
 
 # ✨ Features
 
 - User Registration
-- User Login & Authentication
-- JWT-based Authorization
+- User Login Authentication
+- JWT Access Token Authentication
+- Refresh Token Support
 - Password Encryption using bcrypt
-- User Profile Management
-- Address Management
-- RESTful API Endpoints
-- MySQL Database Integration
+- Role-Based Access Control
+- User Address Management
+- Admin User Management
+- Amazon RDS MySQL Integration
+- RESTful API Design
 - Docker Containerization
-- Cloud-Native Deployment on Amazon ECS Fargate
+- Amazon ECS Fargate Deployment
+- Amazon ECR Image Repository
+- Jenkins CI/CD Pipeline
 
----
+----
 
 <a id="api-endpoints"></a>
 
 # 🔗 API Endpoints
 
-The User Service exposes RESTful APIs for user authentication, profile management, and address management.
-
-## Authentication APIs
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `POST` | `/register` | Register a new user |
-| `POST` | `/login` | Authenticate user and generate JWT token |
-| `GET` | `/profile` | Retrieve authenticated user profile |
-
----
-
-## Address APIs
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `POST` | `/address` | Add a new shipping address |
-| `GET` | `/address` | Retrieve all user addresses |
-| `PUT` | `/address/:id` | Update an existing address |
-| `DELETE` | `/address/:id` | Delete a saved address |
-
----
+The User Service exposes RESTful APIs for user authentication, JWT-based authorization, user address management, and administrative user operations.
 
 ## Authentication
 
-Protected endpoints require a valid JWT access token.
-
-Example:
-
-```http
-Authorization: Bearer <your_jwt_token>
-```
+| Method | Endpoint | Description | Authentication |
+|---------|----------|-------------|----------------|
+| POST | `/users/register` | Register a new user | ❌ |
+| POST | `/users/login` | Authenticate a user | ❌ |
+| POST | `/users/auth/refresh` | Generate a new access token using a refresh token | ❌ |
 
 ---
 
-## Sample Response
+## Address Management
 
-```json
-{
-  "success": true,
-  "message": "User logged in successfully",
-  "token": "<jwt_token>"
-}
+| Method | Endpoint | Description | Authentication |
+|---------|----------|-------------|----------------|
+| POST | `/users/addresses` | Save a new delivery address | ✅ JWT |
+| GET | `/users/addresses` | Retrieve all saved addresses | ✅ JWT |
+| DELETE | `/users/addresses/:id` | Delete an address | ✅ JWT |
+
+---
+
+## Admin
+
+| Method | Endpoint | Description | Authentication |
+|---------|----------|-------------|----------------|
+| GET | `/users/all` | Retrieve all registered users | ✅ Admin |
+
+---
+
+## Health Check
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/health` | Service health status |
+
+---
+
+## Authentication Header
+
+Protected endpoints require a valid JWT access token.
+
+```http
+Authorization: Bearer <your_jwt_access_token>
 ```
 
+---
+<a id="authentication-flow"></a>
+
+# 🔐 Authentication Flow
+
+```
+User
+   │
+Login Request
+   │
+Application Load Balancer
+   │
+User Service
+   │
+Verify Password (bcrypt)
+   │
+Amazon RDS MySQL
+   │
+Generate JWT Access Token
+   │
+Generate Refresh Token
+   │
+Return Tokens
+```
+
+The service authenticates users using email and password, securely hashes passwords with bcrypt, generates JWT access tokens, and issues refresh tokens for session management.
+
+---
+<a id="security-features"></a>
+
+# 🔒 Security Features
+
+The User Service implements several security mechanisms to protect user data and authenticated endpoints.
+
+- JWT Access Token Authentication
+- Refresh Token Authentication
+- Password Hashing using bcrypt
+- Role-based Authorization (Admin/User)
+- Protected Routes using Middleware
+- Secure CORS Configuration
+- Environment Variable Configuration
+- MySQL Parameterized Queries (SQL Injection Protection)
+- Authentication Middleware for API Protection
+
+---
 <a id="tech-stack"></a>
 
 # 🛠️ Tech Stack
 
 | Category | Technology | Purpose |
 |-----------|------------|---------|
-| Backend | Node.js | Runtime Environment |
+| Runtime | Node.js | JavaScript Runtime |
 | Framework | Express.js | REST API Development |
-| Database | MySQL | Persistent Data Storage |
-| Authentication | JSON Web Token (JWT) | User Authentication |
-| Security | bcrypt.js | Password Hashing |
+| Database | Amazon RDS MySQL | Persistent Data Storage |
+| Authentication | JWT | User Authentication |
+| Password Security | bcrypt | Password Hashing |
 | Containerization | Docker | Application Packaging |
 | Container Registry | Amazon ECR | Docker Image Repository |
 | Container Orchestration | Amazon ECS Fargate | Container Deployment |
 | CI/CD | Jenkins | Automated Build & Deployment |
-| Cloud Database | Amazon RDS | Managed MySQL Database |
+| Cloud Platform | AWS | Cloud Infrastructure |
 | Version Control | Git & GitHub | Source Code Management |
 
 ---
-
 <a id="aws-infrastructure"></a>
 
 # ☁️ AWS Infrastructure
 
-The User Service runs as a Docker container inside Amazon ECS Fargate and securely connects to an Amazon RDS MySQL database.
+The User Service is deployed as a Docker container on Amazon ECS Fargate and securely communicates with Amazon RDS MySQL. The service is exposed through an Application Load Balancer and automatically deployed using Jenkins.
 
 | AWS Service | Purpose |
 |--------------|---------|
-| Amazon ECS Fargate | Runs the User Service container |
+| Amazon ECS Fargate | Hosts the User Service container |
 | Amazon ECR | Stores Docker images |
-| Amazon RDS MySQL | Stores user accounts and addresses |
+| Amazon RDS MySQL | User and Address Database |
 | Application Load Balancer | Routes incoming API requests |
-| IAM | Secure AWS access permissions |
-| Security Groups | Network-level firewall rules |
-| Jenkins | Automated CI/CD deployment |
+| Amazon VPC | Secure networking environment |
+| Security Groups | Control inbound and outbound traffic |
+| IAM | Secure access between AWS services |
 
 ---
 
@@ -245,16 +291,18 @@ GitHub Repository
      │
 Webhook
      ▼
-Jenkins Pipeline
+Jenkins
      │
-Checkout Source Code
-     ▼
-Build Docker Image
-     ▼
+Checkout Source
+     │
+Login to Amazon ECR
+     │
+Docker Build
+     │
 Push Image to Amazon ECR
-     ▼
-Register New ECS Task Definition
-     ▼
+     │
+Create New ECS Task Definition
+     │
 Update ECS Service
      ▼
 Amazon ECS Fargate
@@ -275,25 +323,74 @@ Amazon ECS Fargate
 
 ---
 
-<a id="repository-structure"></a>
+<a id="project-structure"></a>
 
-# 📁 Repository Structure
+# 📁 Project Structure
 
-| Folder / File | Description |
-|---------------|-------------|
-| `src/` | Main application source code |
-| `controllers/` | Business logic for authentication and address APIs |
-| `middleware/` | JWT authentication middleware |
-| `models/` | Database models |
-| `routes/` | Express API routes |
-| `app.js` | Main application entry point |
-| `db.js` | MySQL database configuration |
-| `Dockerfile` | Docker image definition |
-| `Jenkinsfile` | CI/CD pipeline configuration |
-| `package.json` | Project dependencies and scripts |
+src/
+│
+├── controllers/
+│     ├── auth.controller.js
+│     └── addressController.js
+│
+├── middleware/
+│     └── auth.middleware.js
+│
+├── models/
+│     └── addressModel.js
+│
+├── routes/
+│     └── auth.routes.js
+│
+├── app.js
+└── db.js
+
+Dockerfile
+Jenkinsfile
+package.json
+README.md
 
 ---
 
+<a id="docker-configuration"></a>
+
+# 🐳 Docker Configuration
+
+The User Service is containerized using Docker, enabling consistent deployments across development, testing, and production environments.
+
+## Dockerfile Overview
+
+| Step | Description |
+|------|-------------|
+| Base Image | Node.js 18 Alpine |
+| Working Directory | `/app` |
+| Dependency Installation | `npm install --production` |
+| Application Source | Copied into the container |
+| Exposed Port | `4000` |
+| Startup Command | `node src/app.js` |
+
+---
+
+## Build Docker Image
+
+```bash
+docker build -t user-service .
+```
+
+---
+
+## Run Docker Container
+
+```bash
+docker run -p 4000:4000 user-service
+```
+
+---
+
+The containerized application is deployed to **Amazon ECS Fargate** through the Jenkins CI/CD pipeline after being pushed to **Amazon ECR**.
+
+ ---
+ 
 <a id="deployment-flow"></a>
 
 # 🚀 Deployment Flow
@@ -325,6 +422,27 @@ Amazon RDS MySQL
 ```
 
 ---
+
+<a id="application-screenshots"></a>
+
+# 📸 Application Screenshots
+
+## 🔐 Login Page
+
+<p align="center">
+  <img src="./assets/LoginPage.png" width="90%">
+</p>
+
+---
+
+## 👤 User Login
+
+<p align="center">
+  <img src="./assets/Login1.png" width="90%">
+</p>
+
+---
+
 
 <a id="getting-started"></a>
 
