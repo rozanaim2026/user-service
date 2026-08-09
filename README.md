@@ -23,6 +23,12 @@
 
 > Provides secure authentication and user management for the LUCCI platform.
 
+<br/>
+
+### 🔗 [Live Application](https://frontend-aws-devops-1.vercel.app)
+
+This service powers part of the live LUCCI application above — see the link for the full working demo.
+
 </div>
 
 ---
@@ -119,8 +125,7 @@ README.md
 ---
 <a id="architecture"></a>
 
-# 🏗️ Architecture
-
+# Architecture
 ```text
 Client (Vercel-hosted frontend)
    │
@@ -236,8 +241,7 @@ Return Tokens
 ---
 <a id="tech-stack"></a>
 
-# 🛠️ Tech Stack
-
+# Tech Stack
 | Category | Technology | Purpose |
 |-----------|------------|---------|
 | Runtime | Node.js | JavaScript Runtime |
@@ -252,8 +256,7 @@ Return Tokens
 ---
 <a id="database-configuration"></a>
 
-# 🗄️ Database Configuration
-
+# Database Configuration
 The service connects to a single shared **Aiven PostgreSQL** instance using the `pg` package with connection pooling and SSL enabled (`ssl: { rejectUnauthorized: false }`).
 
 A compatibility layer in `db.js` converts MySQL-style `?` placeholders to PostgreSQL's `$1, $2...` syntax on the fly, and auto-appends `RETURNING id` to `INSERT` statements so `result.insertId` continues to work exactly as it did against MySQL — meaning controller code required **zero changes** during the migration.
@@ -339,8 +342,7 @@ http://localhost:4000
 ---
 
 <a id="environment-variables"></a>
-# ⚙️ Environment Variables
-
+# Environment Variables
 | Variable | Description |
 |----------|-------------|
 | `DB_HOST` | Aiven PostgreSQL host |
@@ -369,8 +371,7 @@ http://localhost:4000
 ---
 
 <a id="author"></a>
-# 👩‍💻 Author
-
+# Author
 <div align="center">
 
 ## Rozana IM
