@@ -27,12 +27,6 @@
 
 </div>
 
-</br>
-
-🔗 Live Application
-
-This service powers part of the live LUCCI application above — see the link for the full working demo.
-
 ---
 
 # 📑 Table of Contents
